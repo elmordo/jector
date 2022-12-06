@@ -1,6 +1,6 @@
 
 
-pub trait Factory<T, S> {
+pub trait Factory<ContainerType, ValueType> {
     /// Create new instance of service
-    fn new_instance(&mut self, container: &T) -> S;
+    fn new_instance(&self, container: &ContainerType) -> ValueType;
 }
