@@ -1,5 +1,5 @@
 
 
-pub trait Provider<ContainerType, ValueType> {
-    fn get(&self, container: &ContainerType) -> ValueType;
+pub trait Provider<ContainerType, ValueType, ParamsType> {
+    fn get(&self, container: &ContainerType, params: &ParamsType) -> ValueType;
 }
