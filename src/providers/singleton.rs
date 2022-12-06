@@ -1,17 +1,17 @@
 use std::cell::RefCell;
 use std::ops::Deref;
 use std::rc::Rc;
-use crate::Factory;
+use crate::InstanceFactory;
 use crate::providers::provider::Provider;
 
 pub struct Singleton<ContainerType, ValueType> where ValueType: Clone {
-    factory: Box<dyn Factory<ContainerType, ValueType>>,
+    factory: Box<dyn InstanceFactory<ContainerType, ValueType>>,
     value: RefCell<Option<Rc<ValueType>>>,
 }
 
 
 impl<ContainerType, ValueType> Singleton<ContainerType, ValueType> where ValueType: Clone {
-    pub fn new(factory: Box<dyn Factory<ContainerType, ValueType>>) -> Singleton<ContainerType, ValueType> {
+    pub fn new(factory: Box<dyn InstanceFactory<ContainerType, ValueType>>) -> Singleton<ContainerType, ValueType> {
         Singleton { factory, value: RefCell::new(None) }
     }
 
