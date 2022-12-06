@@ -1,19 +1,19 @@
 use crate::{InstanceFactory, Provider};
 
-pub struct Factory<ContainerType, ValueType, ParamType> {
+pub struct Factory<C, V, P> {
 
-    factory: Box<dyn InstanceFactory<ContainerType, ValueType, ParamType>>
+    factory: Box<dyn InstanceFactory<C, V, P>>
 }
 
-impl<ContainerType, ValueType, ParamType> Factory<ContainerType, ValueType, ParamType> {
-    pub fn new(factory: Box<dyn InstanceFactory<ContainerType, ValueType, ParamType>>) -> Self {
+impl<C, V, P> Factory<C, V, P> {
+    pub fn new(factory: Box<dyn InstanceFactory<C, V, P>>) -> Self {
         Factory{factory}
     }
 }
 
 
-impl<ContainerType, ValueType, ParamType> Provider<ContainerType, ValueType, ParamType> for Factory<ContainerType, ValueType, ParamType> {
-    fn get(&self, container: &ContainerType, params: &ParamType) -> ValueType {
+impl<C, V, P> Provider<C, V, P> for Factory<C, V, P> {
+    fn get(&self, container: &C, params: &P) -> V {
         self.factory.new_instance(container, params)
     }
 }

@@ -4,14 +4,14 @@ use std::rc::Rc;
 use crate::InstanceFactory;
 use crate::providers::provider::Provider;
 
-pub struct Singleton<ContainerType, ValueType, ParamType> where ValueType: Clone {
-    factory: Box<dyn InstanceFactory<ContainerType, ValueType, ParamType>>,
-    value: RefCell<Option<Rc<ValueType>>>,
+pub struct Singleton<C, V, P> where V: Clone {
+    factory: Box<dyn InstanceFactory<C, V, P>>,
+    value: RefCell<Option<Rc<V>>>,
 }
 
 
-impl<ContainerType, ValueType, ParamType> Singleton<ContainerType, ValueType, ParamType> where ValueType: Clone {
-    pub fn new(factory: Box<dyn InstanceFactory<ContainerType, ValueType, ParamType>>) -> Self {
+impl<C, V, P> Singleton<C, V, P> where V: Clone {
+    pub fn new(factory: Box<dyn InstanceFactory<C, V, P>>) -> Self {
         Singleton { factory, value: RefCell::new(None) }
     }
 
@@ -19,31 +19,31 @@ impl<ContainerType, ValueType, ParamType> Singleton<ContainerType, ValueType, Pa
         self.value.borrow().is_none()
     }
 
-    fn prepare_value(&self, container: &ContainerType, params: &ParamType) {
+    fn prepare_value(&self, container: &C, params: &P) {
         if self.is_empty() {
             self.set_value(self.create_instance(container, params));
         }
     }
 
-    fn set_value(&self, value: ValueType) {
+    fn set_value(&self, value: V) {
         self.value.replace(Some(Rc::new(value)));
     }
 
-    fn get_value(&self) -> ValueType {
+    fn get_value(&self) -> V {
         // When value is not set (should never happened) -> panic!
         let binding = self.value.borrow();
         let val = binding.as_ref().unwrap();
         val.deref().clone()
     }
 
-    fn create_instance(&self, container: &ContainerType, params: &ParamType) -> ValueType {
+    fn create_instance(&self, container: &C, params: &P) -> V {
         self.factory.new_instance(container, params)
     }
 }
 
 
-impl<ContainerType, ValueType, ParamType> Provider<ContainerType, ValueType, ParamType> for Singleton<ContainerType, ValueType, ParamType> where ValueType: Clone {
-    fn get(&self, container: &ContainerType, params: &ParamType) -> ValueType {
+impl<C, V, P> Provider<C, V, P> for Singleton<C, V, P> where V: Clone {
+    fn get(&self, container: &C, params: &P) -> V {
         self.prepare_value(container, params);
         self.get_value()
     }
