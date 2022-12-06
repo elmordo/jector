@@ -11,7 +11,7 @@ pub struct Singleton<ContainerType, ValueType> where ValueType: Clone {
 
 
 impl<ContainerType, ValueType> Singleton<ContainerType, ValueType> where ValueType: Clone {
-    pub fn new(factory: Box<dyn InstanceFactory<ContainerType, ValueType>>) -> Singleton<ContainerType, ValueType> {
+    pub fn new(factory: Box<dyn InstanceFactory<ContainerType, ValueType>>) -> Self {
         Singleton { factory, value: RefCell::new(None) }
     }
 
