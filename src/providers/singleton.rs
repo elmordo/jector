@@ -1,14 +1,15 @@
 use std::cell::RefCell;
+use std::ops::Deref;
 use crate::Factory;
 use crate::providers::provider::Provider;
 
-pub struct Singleton<ContainerType, ValueType> where ValueType: Clone {
+pub struct Singleton<ContainerType, ValueType> {
     factory: Box<dyn Factory<ContainerType, ValueType>>,
     value: RefCell<Option<ValueType>>,
 }
 
 
-impl<ContainerType, ValueType> Singleton<ContainerType, ValueType> where ValueType: Clone {
+impl<ContainerType, ValueType> Singleton<ContainerType, ValueType> {
     pub fn new(factory: Box<dyn Factory<ContainerType, ValueType>>) -> Singleton<ContainerType, ValueType> {
         Singleton { factory, value: RefCell::new(None) }
     }
@@ -27,10 +28,15 @@ impl<ContainerType, ValueType> Singleton<ContainerType, ValueType> where ValueTy
         self.value.replace(Some(value));
     }
 
-    fn get_value(&self) -> ValueType {
+    fn get_value(&self) -> &ValueType {
         // When value is not set (should never happened) -> panic!
-        self.value.borrow().clone().unwrap()
+        let x = self.value.borrow();
+        todo!()
+    }
 
+    fn get_value_mut(&self) -> &mut ValueType {
+        // When value is not set (should never happened) -> panic!
+        todo!()
     }
 
     fn create_instance(&self, container: &ContainerType) -> ValueType {
@@ -39,9 +45,14 @@ impl<ContainerType, ValueType> Singleton<ContainerType, ValueType> where ValueTy
 }
 
 
-impl<ContainerType, ValueType> Provider<ContainerType, ValueType> for Singleton<ContainerType, ValueType> where ValueType: Clone {
-    fn get(&self, container: &ContainerType) -> ValueType {
+impl<ContainerType, ValueType> Provider<ContainerType, ValueType> for Singleton<ContainerType, ValueType> {
+    fn get(&self, container: &ContainerType) -> &ValueType {
         self.prepare_value(container);
         self.get_value()
+    }
+
+    fn get_mut(&mut self, container: &ContainerType) -> &mut ValueType {
+        self.prepare_value(container);
+        self.get_value_mut()
     }
 }
