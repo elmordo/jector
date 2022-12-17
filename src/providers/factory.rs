@@ -1,4 +1,5 @@
-use crate::{InstanceFactory, Provider};
+use crate::{InstanceFactory};
+use crate::providers::Provider;
 
 pub struct Factory<C, V, P> {
 

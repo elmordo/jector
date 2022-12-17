@@ -2,7 +2,7 @@ use std::cell::RefCell;
 use std::ops::Deref;
 use std::rc::Rc;
 use crate::InstanceFactory;
-use crate::providers::provider::Provider;
+use crate::providers::Provider;
 
 pub struct Singleton<C, V, P> where V: Clone {
     factory: Box<dyn InstanceFactory<C, V, P>>,
