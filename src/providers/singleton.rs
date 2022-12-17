@@ -4,8 +4,13 @@ use std::rc::Rc;
 use crate::InstanceFactory;
 use crate::providers::Provider;
 
+
+/// Clone of single value is always returned.
 pub struct Singleton<C, V, P> where V: Clone {
+    /// The instance factory
     factory: Box<dyn InstanceFactory<C, V, P>>,
+
+    /// Stored instance (Some) or None if instance was not created yet.
     value: RefCell<Option<Rc<V>>>,
 }
 
