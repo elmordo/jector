@@ -64,3 +64,35 @@ impl<C, V, P> Provider<C, V, P> for Singleton<C, V, P> where V: Clone {
         self.get_value()
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use std::cell::RefCell;
+    use crate::InstanceFactory;
+    use crate::providers::{Provider, Singleton};
+
+    #[derive(Default)]
+    struct MyInstanceFactory {
+        val: RefCell<i32>
+    }
+
+    impl InstanceFactory<(), i32, ()> for MyInstanceFactory {
+        /// The first call returns 1, the second returns 2, ...
+        fn new_instance(&self, _: &(), _: &()) -> i32 {
+            let mut ref_val = self.val.borrow_mut();
+            *ref_val += 1;
+            *ref_val
+        }
+    }
+
+    #[test]
+    fn every_call_return_same_value() {
+        let provider = Singleton::new(Box::new(MyInstanceFactory::default()));
+        let val_1 = provider.get(&(), &());
+        let val_2 = provider.get(&(), &());
+
+        assert_eq!(val_1, 1);
+        assert_eq!(val_2, 1);
+    }
+}
