@@ -42,3 +42,14 @@ unique instance of a value.
 The second type of provider is the `Singleton` provider. This provider create value
 only once and then always return copy of this instance. To reach real singleton
 behavior, the `InstanceFactory` should wrap the value into `Rc` or `Arc` container.
+
+### `ProviderStack` provider
+
+Special provider is `ProviderStack`. Allows override provider by another provider 
+and then revert the override back to original provider.
+
+## Example
+
+```rust
+// HERE WILL BE SOME EXAMPLE
+```
