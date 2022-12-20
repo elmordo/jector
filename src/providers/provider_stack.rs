@@ -17,6 +17,11 @@ impl<C, V, P> ProviderStack<C, V, P> {
         ProviderStack{provider_stack: vec![provider]}
     }
 
+    /// Create new instance wrapped in the Box
+    pub fn boxed(provider: Box<dyn Provider<C, V, P>>) -> Box<Self> {
+        Box::new(ProviderStack::new(provider))
+    }
+
     /// Push new provider on the stack
     pub fn push(&mut self, provider: Box<dyn Provider<C, V, P>>) {
         self.provider_stack.push(provider);

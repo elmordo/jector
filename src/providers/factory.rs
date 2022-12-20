@@ -16,6 +16,11 @@ impl<C, V, P> Factory<C, V, P> {
     pub fn new(factory: Box<dyn InstanceFactory<C, V, P>>) -> Self {
         Factory{factory}
     }
+
+    /// Create new instance wrapped in the Box
+    pub fn boxed(factory: Box<dyn InstanceFactory<C, V, P>>) -> Box<Self> {
+        Box::new(Self::new(factory))
+    }
 }
 
 

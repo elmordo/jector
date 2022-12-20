@@ -24,6 +24,11 @@ impl<C, V, P> Singleton<C, V, P> where V: Clone {
         Singleton { factory, value: RefCell::new(None) }
     }
 
+    /// Create new instance wrapped in the Box
+    pub fn boxed(factory: Box<dyn InstanceFactory<C, V, P>>) -> Box<Self> {
+        Box::new(Self::new(factory))
+    }
+
     /// Return true if value was not created yet
     pub fn is_empty(&self) -> bool {
         self.value.borrow().is_none()
