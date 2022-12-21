@@ -1,4 +1,4 @@
-use jector::{InstanceFactory, Provider};
+use jector::{ValueFactory, Provider};
 use jector::providers::Singleton;
 
 fn main() {
@@ -21,7 +21,7 @@ impl MyConstant {
     }
 }
 
-impl<C> InstanceFactory<C, i32, ()> for MyConstant {
+impl<C> ValueFactory<C, i32, ()> for MyConstant {
     fn new_instance(&self, _: &C, _: &()) -> i32 {
         self.val
     }

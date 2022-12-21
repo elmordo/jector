@@ -1,4 +1,4 @@
-use crate::{InstanceFactory};
+use crate::{ValueFactory};
 use crate::providers::Provider;
 
 
@@ -8,17 +8,17 @@ use crate::providers::Provider;
 pub struct Factory<C, V, P> {
 
     /// The instance factory
-    factory: Box<dyn InstanceFactory<C, V, P>>
+    factory: Box<dyn ValueFactory<C, V, P>>
 }
 
 impl<C, V, P> Factory<C, V, P> {
     /// Make new instance of the Factory struct
-    pub fn new(factory: Box<dyn InstanceFactory<C, V, P>>) -> Self {
+    pub fn new(factory: Box<dyn ValueFactory<C, V, P>>) -> Self {
         Factory{factory}
     }
 
     /// Create new instance wrapped in the Box
-    pub fn boxed(factory: Box<dyn InstanceFactory<C, V, P>>) -> Box<Self> {
+    pub fn boxed(factory: Box<dyn ValueFactory<C, V, P>>) -> Box<Self> {
         Box::new(Self::new(factory))
     }
 }
@@ -35,7 +35,7 @@ impl<C, V, P> Provider<C, V, P> for Factory<C, V, P> {
 #[cfg(test)]
 mod tests {
     use std::cell::RefCell;
-    use crate::InstanceFactory;
+    use crate::ValueFactory;
     use crate::providers::{Factory, Provider};
 
     #[derive(Default)]
@@ -43,7 +43,7 @@ mod tests {
         val: RefCell<i32>
     }
 
-    impl InstanceFactory<(), i32, ()> for MyInstanceFactory {
+    impl ValueFactory<(), i32, ()> for MyInstanceFactory {
         /// The first call returns 1, the second returns 2, ...
         fn new_instance(&self, _: &(), _: &()) -> i32 {
             let mut ref_val = self.val.borrow_mut();

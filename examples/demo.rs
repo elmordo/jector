@@ -1,5 +1,5 @@
 use std::cell::RefCell;
-use jector::{Factory, InstanceFactory, Provider, ProviderStack};
+use jector::{Factory, ValueFactory, Provider, ProviderStack};
 use jector::providers::Singleton;
 
 fn main() {
@@ -46,7 +46,7 @@ impl MyConstant {
 }
 
 
-impl<C> InstanceFactory<C, i32, ()> for MyConstant {
+impl<C> ValueFactory<C, i32, ()> for MyConstant {
     fn new_instance(&self, _: &C, _: &()) -> i32 {
         self.val
     }
@@ -75,10 +75,10 @@ impl SimpleSequence {
 }
 
 
-impl<C> InstanceFactory<C, i32, ()> for SimpleSequence
+impl<C> ValueFactory<C, i32, ()> for SimpleSequence
     where C: ConstantProvider
 {
-    fn new_instance(&self, container: &C, params: &()) -> i32 {
+    fn new_instance(&self, container: &C, _params: &()) -> i32 {
         let mut val = self.val.borrow_mut();
         *val += 1;
         container.get_constant() + *val
@@ -108,7 +108,7 @@ impl SequenceWithParam {
 }
 
 
-impl<C> InstanceFactory<C, i32, i32> for SequenceWithParam
+impl<C> ValueFactory<C, i32, i32> for SequenceWithParam
     where C: ConstantProvider
 {
     fn new_instance(&self, container: &C, params: &i32) -> i32 {
