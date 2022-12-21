@@ -4,12 +4,24 @@ Jector is just another dependency injector for Rust.
 
 ## Project structure
 
+* **Application** is your app (or lib) where dependency injection is used.
+* **Dependency injector** is container struct where providers are stored and. Also implements
+specific provider traits.
+* **Specific providers** are traits implemented by **dependency injector** and used by **providers**
+and **application** to access **values** provided by **providers**.
+* **Provider** are responsible for the **value** providing strategy. At this time, 
+the `Factory` (always returns unique **value**) and the `Singleton` (create **value** only once and then returns 
+same instance) providers are supported.
+* **Value factories** are responsible for **value** creation strategy.
+* **Values** are instances of services, config values, ... provided created by **value factories** 
+and provided by **provides**
+
 ```
                Application
                     ↑
                     |
                     |
-           Dependency injector
+           Dependency injector : Specific provider 1 + Specific provider 2
                     ↑
                     |
          +----------+-----------+
@@ -19,17 +31,17 @@ Jector is just another dependency injector for Rust.
          ↑                      ↑
          |                      |
          |                      |
-Instance factory 1      Instance factory 2
+  Value factory 1         Value factory 2
 ```
 
-## Instance factories
+## Value factories
 
-Foundation of the injector is `InstanceFactory` trait. This trait provides 
+Foundation of the injector is `ValueFactory` trait. This trait provides 
 functionality to create new and unique instances of value.
 
 ## Providers
 
-The value created by `InstanceFactory` is given to a provider. Providers deliver 
+The value created by `ValueFactory` is given to a provider. Providers deliver 
 values to rest of application.
 
 ### `Factory` provider
@@ -41,7 +53,7 @@ unique instance of a value.
 
 The second type of provider is the `Singleton` provider. This provider create value
 only once and then always return copy of this instance. To reach real singleton
-behavior, the `InstanceFactory` should wrap the value into `Rc` or `Arc` container.
+behavior, the `ValueFactory` should wrap the value into `Rc` or `Arc` container.
 
 ### `ProviderStack` provider
 
@@ -53,7 +65,7 @@ and then revert the override back to original provider.
 Following example can be found in `examples/simple_demo.rs` or you can run it by `cargo run --example simple_demo`
 
 ```rust
-use jector::{InstanceFactory, Provider};
+use jector::{ValueFactory, Provider};
 use jector::providers::Singleton;
 
 fn main() {
@@ -76,7 +88,7 @@ impl MyConstant {
     }
 }
 
-impl<C> InstanceFactory<C, i32, ()> for MyConstant {
+impl<C> ValueFactory<C, i32, ()> for MyConstant {
     fn new_instance(&self, _: &C, _: &()) -> i32 {
         self.val
     }
