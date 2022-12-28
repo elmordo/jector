@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 use std::ops::Deref;
 use std::rc::Rc;
-use crate::InstanceFactory;
+use crate::ValueFactory;
 use crate::providers::Provider;
 
 
@@ -11,7 +11,7 @@ use crate::providers::Provider;
 /// For generic argument, see the Provider trait
 pub struct Singleton<C, V, P> where V: Clone {
     /// The instance factory
-    factory: Box<dyn InstanceFactory<C, V, P>>,
+    factory: Box<dyn ValueFactory<C, V, P>>,
 
     /// Stored instance (Some) or None if instance was not created yet.
     value: RefCell<Option<Rc<V>>>,
@@ -20,8 +20,13 @@ pub struct Singleton<C, V, P> where V: Clone {
 
 impl<C, V, P> Singleton<C, V, P> where V: Clone {
     /// Create new singleton provider instance
-    pub fn new(factory: Box<dyn InstanceFactory<C, V, P>>) -> Self {
+    pub fn new(factory: Box<dyn ValueFactory<C, V, P>>) -> Self {
         Singleton { factory, value: RefCell::new(None) }
+    }
+
+    /// Create new instance wrapped in the Box
+    pub fn boxed(factory: Box<dyn ValueFactory<C, V, P>>) -> Box<Self> {
+        Box::new(Self::new(factory))
     }
 
     /// Return true if value was not created yet
@@ -62,5 +67,37 @@ impl<C, V, P> Provider<C, V, P> for Singleton<C, V, P> where V: Clone {
     fn get(&self, container: &C, params: &P) -> V {
         self.prepare_value(container, params);
         self.get_value()
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use std::cell::RefCell;
+    use crate::ValueFactory;
+    use crate::providers::{Provider, Singleton};
+
+    #[derive(Default)]
+    struct MyInstanceFactory {
+        val: RefCell<i32>
+    }
+
+    impl ValueFactory<(), i32, ()> for MyInstanceFactory {
+        /// The first call returns 1, the second returns 2, ...
+        fn new_instance(&self, _: &(), _: &()) -> i32 {
+            let mut ref_val = self.val.borrow_mut();
+            *ref_val += 1;
+            *ref_val
+        }
+    }
+
+    #[test]
+    fn every_call_return_same_value() {
+        let provider = Singleton::new(Box::new(MyInstanceFactory::default()));
+        let val_1 = provider.get(&(), &());
+        let val_2 = provider.get(&(), &());
+
+        assert_eq!(val_1, 1);
+        assert_eq!(val_2, 1);
     }
 }
