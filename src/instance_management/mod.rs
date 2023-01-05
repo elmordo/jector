@@ -1,4 +1,4 @@
 mod singleton;
-mod value;
+mod instance;
 mod prototype;
 mod factory;
