@@ -3,7 +3,7 @@ pub type InstanceFactory<T, Args = ()> = dyn Fn(Args) -> T;
 
 
 /// Common interface for instance managers
-pub trait InstanceManager<T, Args = ()> {
+pub trait InstanceManager<'self_, 'args, T, Args = ()> {
     /// Get instance for the instance manager
-    fn get_instance(&self, args: &Args) -> T;
+    fn get_instance(&'self_ self, args: &'args Args) -> T;
 }

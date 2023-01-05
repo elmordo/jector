@@ -12,8 +12,8 @@ impl<T> Value<T> {
 }
 
 
-impl<T> InstanceManager<&T> for Value<T> {
-    fn get_instance(&self, args: &()) -> &T {
+impl<'self_, 'args, T> InstanceManager<'self_, 'args, &'self_ T> for Value<T> {
+    fn get_instance(&self, _: &()) -> &T {
         &self.value
     }
 }
