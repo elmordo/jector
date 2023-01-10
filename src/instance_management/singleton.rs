@@ -46,12 +46,18 @@ impl<T> InstanceManager<Arc<T>> for Singleton<T> {
 
 #[cfg(test)]
 mod tests {
+    use std::borrow::Borrow;
+    use std::cell::RefCell;
     use std::ptr::addr_of;
     use crate::instance_management::singleton::Singleton;
     use crate::InstanceManager;
 
-    fn make_singleton() -> Singleton<()> {
-        Singleton::new(Box::new(move |_| ()))
+    fn make_singleton() -> Singleton<i32> {
+        let x = RefCell::new(0);
+        Singleton::new(Box::new(move |_| {
+            *x.borrow_mut() += 1;
+            x.borrow().clone()
+        }))
     }
 
     #[test]
@@ -89,6 +95,6 @@ mod tests {
         let v1 = s.get_instance(&());
         s.clear();
         let v2 = s.get_instance(&());
-        assert_ne!(addr_of!(*v1), addr_of!(*v2));
+        assert_ne!(v1, v2);
     }
 }
