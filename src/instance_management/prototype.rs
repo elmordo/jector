@@ -1,4 +1,3 @@
-use std::borrow::Borrow;
 use std::ops::Deref;
 use std::sync::Arc;
 use crate::InstanceManager;
@@ -15,7 +14,7 @@ impl<T> Prototype<T> where T: Clone {
 
 
 impl<T> InstanceManager<T, ()> for Prototype<T> where T: Clone {
-    fn get_instance(&self, args: &()) -> T {
+    fn get_instance(&self, _: &()) -> T {
         self.instance.deref().clone()
     }
 }

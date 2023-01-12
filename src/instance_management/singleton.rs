@@ -46,9 +46,7 @@ impl<T> InstanceManager<Arc<T>> for Singleton<T> {
 
 #[cfg(test)]
 mod tests {
-    use std::borrow::Borrow;
     use std::cell::RefCell;
-    use std::ptr::addr_of;
     use crate::instance_management::singleton::Singleton;
     use crate::InstanceManager;
 
