@@ -2,11 +2,17 @@ use std::ops::Deref;
 use std::sync::Arc;
 use crate::InstanceManager;
 
+/// Always returns clone of initial instance
+///
+/// Similar to the `Instance` instance manager but does not returns reference to the original
+/// but its clone.
 pub struct Prototype<T> where T: Clone {
+    /// Stored instance
     instance: Arc<T>
 }
 
 impl<T> Prototype<T> where T: Clone {
+    /// Create new instance of the `Prototype` instance manager
     pub fn new(instance: T) -> Prototype<T> {
         Prototype{instance: Arc::new(instance)}
     }
